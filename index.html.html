@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 26.8.0.3 (Linux)"/>
+	<meta name="created" content="00:00:00"/>
+	<meta name="changed" content="00:00:00"/>
+	<style type="text/css">
+		@page { size: 8.27in 11.69in; margin: 0.79in }
+		p { margin-bottom: 0.1in; line-height: 115%; background: transparent }
+		pre { font-size: 10pt; font-family: "Liberation Mono", monospace; background: transparent }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;km&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;<span lang="hi-IN">រឿងភាគចិនខ្លីៗ </span>- Mini App&lt;/title&gt;
+    &lt;!-- Telegram Web App SDK --&gt;
+    &lt;script src=&quot;https://telegram.org/js/telegram-web-app.js&quot;&gt;&lt;/script&gt;
+    &lt;style&gt;
+        body {
+            font-family: 'Siemreap', sans-serif, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #ffffff;
+            margin: 0;
+            padding: 15px;
+        }
+        h2 { text-align: center; color: #38bdf8; }
+        .user-info {
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .movie-card {
+            background: #1e293b;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .movie-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .movie-content {
+            padding: 12px;
+        }
+        .movie-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .badge-free { background: #22c55e; color: white; }
+        .badge-vip { background: #eab308; color: black; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 8px;
+            text-decoration: none;
+        }
+        .btn-vip { background: #ef4444; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;h2&gt;🎬 <span lang="hi-IN">រឿងភាគចិនខ្លីៗ</span>&lt;/h2&gt;
+    
+    &lt;div class=&quot;user-info&quot; id=&quot;userInfo&quot;&gt;
+<span lang="hi-IN">        កំពុងផ្ទុកទិន្នន័យ </span>User...
+    &lt;/div&gt;
+
+    &lt;div id=&quot;movieList&quot;&gt;
+        &lt;p style=&quot;text-align: center;&quot;&gt;<span lang="hi-IN">កំពុងទាញយករឿង</span>...&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;script&gt;
+        // <span lang="hi-IN">បើក </span>Telegram WebApp SDK
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // <span lang="hi-IN">យក </span>Telegram User ID <span lang="hi-IN">របស់ភ្ញៀវ</span>
+        let user = tg.initDataUnsafe.user;
+        let telegramId = user ? user.id : &quot;GUEST_123&quot;; // ID <span lang="hi-IN">ត្រឹមត្រូវពេលរត់ក្នុង </span>Telegram
+        let username = user ? user.username : &quot;Guest&quot;;
+
+        document.getElementById('userInfo').innerHTML = `👤 &lt;b&gt;<span lang="hi-IN">ស្វាគមន៍៖</span>&lt;/b&gt; ${user ? user.first_name : '<span lang="hi-IN">ភ្ញៀវ</span>'} | ID: ${telegramId}`;
+
+        // <span lang="hi-IN">ដាក់ </span>Google Apps Script Web App URL <span lang="hi-IN">ของคุณទីនេះ</span>
+        const API_URL = &quot;https://script.google.com/macros/s/AKfycbw84JSDD3mYSD2XwrqXLqOASDdIDfwhvIgbv2p4Zy5pH7w1ChCg47VXS9_prjEgMUcI/exec&quot;;
+
+        let userStatus = &quot;Free&quot;;
+
+        // <span lang="hi-IN">ពិនិត្យមើលសមាជិកភាព </span>User
+        function checkUserStatus() {
+            fetch(`${API_URL}?action=checkUser&amp;telegramId=${telegramId}`)
+                .then(response =&gt; response.json())
+                .then(data =&gt; {
+                    if(data.status === &quot;success&quot;) {
+                        userStatus = data.data.status; // Free <span lang="hi-IN">ឬ </span>VIP
+                        if(userStatus === &quot;VIP&quot;) {
+                            document.getElementById('userInfo').innerHTML += `&lt;br&gt;⭐ <span lang="hi-IN">ស្ថានភាព៖ </span>&lt;span style=&quot;color: #eab308; font-weight: bold;&quot;&gt;VIP Member&lt;/span&gt; (<span lang="hi-IN">ផុតកំណត់៖ </span>${data.data.expiryDate})`;
+                        } else {
+                            document.getElementById('userInfo').innerHTML += `&lt;br&gt;⭐ <span lang="hi-IN">ស្ថានភាព៖ </span>Free (<span lang="hi-IN">សូមអភិវឌ្ឍជា </span>VIP <span lang="hi-IN">ដើម្បីមើលរឿងពេញ</span>)`;
+                        }
+                    }
+                    loadMovies();
+                })
+                .catch(err =&gt; {
+                    console.error(err);
+                    loadMovies();
+                });
+        }
+
+        // <span lang="hi-IN">ទាញយកបញ្ជីរឿង</span>
+        function loadMovies() {
+            fetch(`${API_URL}?action=getMovies`)
+                .then(response =&gt; response.json())
+                .then(data =&gt; {
+                    if(data.status === &quot;success&quot;) {
+                        let movies = data.data;
+                        let html = &quot;&quot;;
+                        
+                        movies.forEach(movie =&gt; {
+                            let isVipMovie = movie.type === &quot;VIP&quot;;
+                            let canWatch = !isVipMovie || (userStatus === &quot;VIP&quot;);
+                            
+                            html += `
+                                &lt;div class=&quot;movie-card&quot;&gt;
+                                    &lt;img src=&quot;${movie.thumbnail}&quot; alt=&quot;${movie.title}&quot;&gt;
+                                    &lt;div class=&quot;movie-content&quot;&gt;
+                                        &lt;div class=&quot;movie-title&quot;&gt;${movie.title} - <span lang="hi-IN">ភាគទី </span>${movie.episode}&lt;/div&gt;
+                                        &lt;span class=&quot;badge ${isVipMovie ? 'badge-vip' : 'badge-free'}&quot;&gt;${movie.type}&lt;/span&gt;
+                                        ${canWatch ? 
+                                            `&lt;a href=&quot;${movie.videoUrl}&quot; target=&quot;_blank&quot; class=&quot;btn&quot;&gt;▶️ <span lang="hi-IN">មើលវីដេអូ</span>&lt;/a&gt;` : 
+                                            `&lt;button class=&quot;btn btn-vip&quot; onclick=&quot;alert('<span lang="hi-IN">រឿងនេះសម្រាប់តែ </span>VIP! <span lang="hi-IN">សូមទាក់ទងបង់ប្រាក់ដើម្បីទស្សនា</span>')&quot;&gt;🔒 <span lang="hi-IN">រឿង </span>VIP (<span lang="hi-IN">ចង់ទិញ</span>)&lt;/button&gt;`
+                                        }
+                                    &lt;/div&gt;
+                                &lt;/div&gt;
+                            `;
+                        });
+                        document.getElementById('movieList').innerHTML = html;
+                    }
+                })
+                .catch(err =&gt; {
+                    document.getElementById('movieList').innerHTML = &quot;&lt;p style='text-align: center; color: red;'&gt;<span lang="hi-IN">បរាជ័យក្នុងការទាញទិន្នន័យរឿង</span>&lt;/p&gt;&quot;;
+                });
+        }
+
+        // <span lang="hi-IN">ចាប់ផ្តើមដំណើរការ</span>
+        checkUserStatus();
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+</body>
+</html>
