@@ -26,7 +26,7 @@
             background: #1e293b;
             border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
         }
         .movie-card img {
@@ -48,25 +48,28 @@
             font-size: 12px;
             border-radius: 4px;
             font-weight: bold;
+            margin-bottom: 8px;
         }
         .badge-free { background: #22c55e; color: white; }
         .badge-vip { background: #eab308; color: black; }
-        .btn {
-            display: block;
+        
+        /* Video Player Styling */
+        video {
             width: 100%;
-            padding: 10px;
-            background: #3b82f6;
+            border-radius: 6px;
+            margin-top: 8px;
+            background: #000;
+        }
+        .locked-msg {
+            background: #ef4444;
             color: white;
-            border: none;
+            text-align: center;
+            padding: 10px;
             border-radius: 6px;
             font-size: 14px;
             font-weight: bold;
-            cursor: pointer;
-            text-align: center;
             margin-top: 8px;
-            text-decoration: none;
         }
-        .btn-vip { background: #ef4444; }
     </style>
 </head>
 <body>
@@ -87,11 +90,10 @@
 
         let user = tg.initDataUnsafe.user;
         let telegramId = user ? user.id : "GUEST_123";
-        let username = user ? user.username : "Guest";
 
         document.getElementById('userInfo').innerHTML = `👤 <b>ស្វាគមន៍៖</b> ${user ? user.first_name : 'ភ្ញៀវ'} | ID: ${telegramId}`;
 
-        // ជំនួសតំណរភ្ជាប់ Google Apps Script Web App URL របស់អ្នកនៅទីនេះ
+        // ជំនួស Google Apps Script Web App URL របស់អ្នកនៅទីនេះ
         const API_URL = "https://script.google.com/macros/s/AKfycbw84JSDD3mYSD2XwrqXLqOASDdIDfwhvIgbv2p4Zy5pH7w1ChCg47VXS9_prjEgMUcI/exec";
 
         let userStatus = "Free";
@@ -103,9 +105,9 @@
                     if(data.status === "success") {
                         userStatus = data.data.status;
                         if(userStatus === "VIP") {
-                            document.getElementById('userInfo').innerHTML += `<br>⭐ ស្ថានភាព៖ <span style="color: #eab308; font-weight: bold;">VIP Member</span> (ផុតកំណត់៖ ${data.data.expiryDate})`;
+                            document.getElementById('userInfo').innerHTML += `<br>⭐ ស្ថានភាព៖ <span style="color: #eab308; font-weight: bold;">VIP Member</span>`;
                         } else {
-                            document.getElementById('userInfo').innerHTML += `<br>⭐ ស្ថានភាព៖ Free (សូមអភិវឌ្ឍជា VIP ដើម្បីមើលរឿងពេញ)`;
+                            document.getElementById('userInfo').innerHTML += `<br>⭐ ស្ថានភាព៖ Free`;
                         }
                     }
                     loadMovies();
@@ -134,9 +136,13 @@
                                     <div class="movie-content">
                                         <div class="movie-title">${movie.title} - ភាគទី ${movie.episode}</div>
                                         <span class="badge ${isVipMovie ? 'badge-vip' : 'badge-free'}">${movie.type}</span>
+                                        
                                         ${canWatch ? 
-                                            `<a href="${movie.videoUrl}" target="_blank" class="btn">▶️ មើលវីដេអូ</a>` : 
-                                            `<button class="btn btn-vip" onclick="alert('រឿងនេះសម្រាប់តែ VIP! សូមទាក់ទងបង់ប្រាក់ដើម្បីទស្សនា')">🔒 រឿង VIP (ចង់ទិញ)</button>`
+                                            `<video controls controlsList="nodownload">
+                                                <source src="${movie.videoUrl}" type="video/mp4">
+                                                Browser របស់អ្នកមិនគាំទ្រ Video Player ទេ។
+                                             </video>` : 
+                                            `<div class="locked-msg">🔒 រឿង VIP (សូមទាក់ទង Admin ដើម្បីបង់ប្រាក់ទស្សនា)</div>`
                                         }
                                     </div>
                                 </div>
